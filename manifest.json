@@ -1,0 +1,10 @@
+{
+  "name": "Twitch Extension Login Exemple",
+  "description": "Twitch extension login exemple",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["identity"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
