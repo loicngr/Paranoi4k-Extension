@@ -1,5 +1,6 @@
 {
   "auth": {
     "clientId": "...."
-  }
+  },
+    "streamerUID": "streamer_user_id (ex: 12345678)"
 }
