@@ -1,5 +1,6 @@
 export const STORE_LOGGED_KEY = 'logged'
 export const STORE_USER_KEY = 'user'
+export const STORE_STREAM_KEY = 'stream'
 export const STORE_ACCESS_TOKEN_KEY = 'accessToken'
 export const STORE_SHOW_NOTIFICATION_KEY = 'showNotification'
 
@@ -24,6 +25,12 @@ class Store {
         })
     }
 
+    get stream() {
+        return new Promise((resolve) => {
+            chrome.storage.local.get([STORE_STREAM_KEY], r => resolve(r[STORE_STREAM_KEY]))
+        })
+    }
+
     get showNotification() {
         return new Promise((resolve) => {
             chrome.storage.local.get([STORE_SHOW_NOTIFICATION_KEY], r => resolve(r[STORE_SHOW_NOTIFICATION_KEY]))
@@ -32,6 +39,10 @@ class Store {
 
     set [STORE_USER_KEY](user) {
         chrome.storage.local.set({ [STORE_USER_KEY]: user })
+    }
+
+    set [STORE_STREAM_KEY](stream) {
+        chrome.storage.local.set({ [STORE_STREAM_KEY]: stream })
     }
 
     set [STORE_LOGGED_KEY](status) {
@@ -74,6 +85,10 @@ export class State {
         return this._store.user
     }
 
+    get stream() {
+        return this._store.stream
+    }
+
     get isLogged() {
         return this._store.isLogged
     }
@@ -88,6 +103,10 @@ export class State {
 
     set [STORE_USER_KEY](user) {
         this._store[STORE_USER_KEY] = user
+    }
+
+    set [STORE_STREAM_KEY](stream) {
+        this._store[STORE_STREAM_KEY] = stream
     }
 
     set [STORE_ACCESS_TOKEN_KEY](token) {

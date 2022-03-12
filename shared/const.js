@@ -14,3 +14,4 @@ export const ALARM_API_FETCH_INTERVAL = (60000) / 60000
 
 
 export const ALARM_FETCH_USER_KEY = 'alarmFetchUser'
+export const ALARM_FETCH_STREAM_KEY = 'alarmFetchStream'

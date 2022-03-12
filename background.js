@@ -1,10 +1,11 @@
 import {Api} from "./shared/api.js";
 import {
     State,
-    STORE_SHOW_NOTIFICATION_KEY,
+    STORE_ACCESS_TOKEN_KEY,
     STORE_LOGGED_KEY,
-    STORE_USER_KEY,
-    STORE_ACCESS_TOKEN_KEY
+    STORE_SHOW_NOTIFICATION_KEY,
+    STORE_STREAM_KEY,
+    STORE_USER_KEY
 } from "./shared/state.js";
 import {
     ALARM_API_FETCH_INTERVAL,
@@ -18,6 +19,16 @@ import {launchNotification} from "./shared/notification.js";
 
 const state = new State()
 let api = null
+
+async function checkStream() {
+    if (!(await state.isLogged)) {
+        state[STORE_STREAM_KEY] = null
+        return
+    }
+
+    const stream = await api.stream
+    state[STORE_STREAM_KEY] = stream.data
+}
 
 async function checkUser() {
     const user = await api.user
@@ -37,11 +48,13 @@ async function checkUser() {
 
     state[STORE_LOGGED_KEY] = true
     state[STORE_USER_KEY] = user.data[0]
+
+    await checkStream()
 }
 
 async function Init(config) {
     const accessToken = await state.accessToken
-    api = new Api(config.auth.clientId, accessToken)
+    api = new Api(config.auth.clientId, accessToken, config.streamerUID)
     api.init()
 
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -57,6 +70,17 @@ async function Init(config) {
     await checkUser()
     chrome.alarms.create(ALARM_FETCH_USER_KEY, {
         periodInMinutes: ALARM_API_FETCH_INTERVAL
+    })
+    chrome.storage.onChanged.addListener((changes) => {
+        for (const [key, {newValue}] of Object.entries(changes)) {
+            switch (key) {
+                case STORE_ACCESS_TOKEN_KEY:
+                    api.accessToken = newValue
+                    break
+                default:
+                    break
+            }
+        }
     })
 }
 
@@ -75,7 +99,7 @@ async function handleNotification(notification, buttonId = null) {
 
 chrome.notifications.onButtonClicked.addListener(handleNotification)
 chrome.notifications.onClicked.addListener(handleNotification)
-chrome.alarms.onAlarm.addListener(async ({ name }) => {
+chrome.alarms.onAlarm.addListener(async ({name}) => {
     switch (name) {
         case ALARM_FETCH_USER_KEY:
             const accessToken = await state.accessToken
