@@ -10,4 +10,7 @@ export const MSG_SHOW_CONFIRM = 'showConfirm'
 export const NOTIFiCATION_NEED_LOGIN = 'needLogin'
 
 
-export const API_FETCH_INTERVAL = 60000
+export const ALARM_API_FETCH_INTERVAL = (60000) / 60000
+
+
+export const ALARM_FETCH_USER_KEY = 'alarmFetchUser'

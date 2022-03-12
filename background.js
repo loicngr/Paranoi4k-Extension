@@ -7,7 +7,8 @@ import {
     STORE_ACCESS_TOKEN_KEY
 } from "./shared/state.js";
 import {
-    API_FETCH_INTERVAL,
+    ALARM_API_FETCH_INTERVAL,
+    ALARM_FETCH_USER_KEY,
     DATA_AUTH_REQUIRED_NOTIFICATION,
     MSG_GET_CONFIG,
     NOTIFiCATION_NEED_LOGIN
@@ -17,25 +18,6 @@ import {launchNotification} from "./shared/notification.js";
 
 const state = new State()
 let api = null
-let apiInterval = null
-
-function launchApiInterval() {
-    apiInterval = setInterval(async () => {
-        const accessToken = await state.accessToken
-
-        if (!api.hasAccessToken && accessToken) {
-            api.accessToken = accessToken
-            state[STORE_ACCESS_TOKEN_KEY] = accessToken
-        }
-
-        await checkUser()
-    }, API_FETCH_INTERVAL)
-}
-
-function stopApiInterval() {
-    clearInterval(apiInterval)
-    apiInterval = null
-}
 
 async function checkUser() {
     const user = await api.user
@@ -73,7 +55,9 @@ async function Init(config) {
     })
 
     await checkUser()
-    launchApiInterval()
+    chrome.alarms.create(ALARM_FETCH_USER_KEY, {
+        periodInMinutes: ALARM_API_FETCH_INTERVAL
+    })
 }
 
 
@@ -91,6 +75,20 @@ async function handleNotification(notification, buttonId = null) {
 
 chrome.notifications.onButtonClicked.addListener(handleNotification)
 chrome.notifications.onClicked.addListener(handleNotification)
+chrome.alarms.onAlarm.addListener(async ({ name }) => {
+    switch (name) {
+        case ALARM_FETCH_USER_KEY:
+            const accessToken = await state.accessToken
+            if (!api.hasAccessToken && accessToken) {
+                api.accessToken = accessToken
+                state[STORE_ACCESS_TOKEN_KEY] = accessToken
+            }
+            await checkUser()
+            break
+        default:
+            break
+    }
+})
 
 loadFile('config.json')
     .then(Init)
