@@ -1,5 +1,5 @@
-# Twitch Extension login exemple
+# Paranoi4k Extension
 
-- This is a simple exemple where i show you how to create `launchWebAuthFlow` for login user.
+- Use `config.json.exemple` for setup project
 - You need to create Twitch application [here](https://dev.twitch.tv/console/apps) for get an clientId
   - for `redirectUrl` you can set `https://<app-id>.chromiumapp.org/` (https://developer.chrome.com/docs/extensions/reference/identity/)
