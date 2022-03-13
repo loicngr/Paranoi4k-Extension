@@ -2,6 +2,7 @@ export const STORE_LOGGED_KEY = 'logged'
 export const STORE_USER_KEY = 'user'
 export const STORE_STREAM_KEY = 'stream'
 export const STORE_ACCESS_TOKEN_KEY = 'accessToken'
+export const STORE_CONFIG_KEY = 'config'
 export const STORE_SHOW_NOTIFICATION_KEY = 'showNotification'
 
 class Store {
@@ -22,6 +23,12 @@ class Store {
     get accessToken() {
         return new Promise((resolve) => {
             chrome.storage.local.get([STORE_ACCESS_TOKEN_KEY], r => resolve(r[STORE_ACCESS_TOKEN_KEY]))
+        })
+    }
+
+    get config() {
+        return new Promise((resolve) => {
+            chrome.storage.local.get([STORE_CONFIG_KEY], r => resolve(r[STORE_CONFIG_KEY]))
         })
     }
 
@@ -55,6 +62,10 @@ class Store {
 
     set [STORE_SHOW_NOTIFICATION_KEY](status) {
         chrome.storage.local.set({ [STORE_SHOW_NOTIFICATION_KEY]: status })
+    }
+
+    set [STORE_CONFIG_KEY](config) {
+        chrome.storage.local.set({ [STORE_CONFIG_KEY]: config })
     }
 }
 
@@ -97,6 +108,10 @@ export class State {
         return this._store.accessToken
     }
 
+    get config() {
+        return this._store.config
+    }
+
     set [STORE_LOGGED_KEY](status) {
         this._store[STORE_LOGGED_KEY] = status
     }
@@ -115,5 +130,9 @@ export class State {
 
     set [STORE_SHOW_NOTIFICATION_KEY](status) {
         this._store[STORE_SHOW_NOTIFICATION_KEY] = status
+    }
+
+    set [STORE_CONFIG_KEY](config) {
+        this._store[STORE_CONFIG_KEY] = config
     }
 }

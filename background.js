@@ -1,24 +1,45 @@
-import {Api} from "./shared/api.js";
+import {Api} from "./shared/api.js"
 import {
     State,
     STORE_ACCESS_TOKEN_KEY,
+    STORE_CONFIG_KEY,
     STORE_LOGGED_KEY,
     STORE_SHOW_NOTIFICATION_KEY,
     STORE_STREAM_KEY,
     STORE_USER_KEY
-} from "./shared/state.js";
+} from "./shared/state.js"
 import {
     ALARM_API_FETCH_INTERVAL,
     ALARM_FETCH_USER_KEY,
     DATA_AUTH_REQUIRED_NOTIFICATION,
-    MSG_GET_CONFIG,
     NOTIFiCATION_NEED_LOGIN
-} from "./shared/const.js";
-import {loadFile} from "./shared/utils.js";
-import {launchNotification} from "./shared/notification.js";
+} from "./shared/const.js"
+import {loadFile} from "./shared/utils.js"
+import {launchNotification} from "./shared/notification.js"
 
-const state = new State()
+let state = new State()
 let api = null
+
+const getState = () => {
+    return state ? state : new State()
+}
+
+const getApi = async () => {
+    if (!api) {
+        const _config = await state.config
+        const _accessToken = await state.accessToken
+
+        api = new Api(_config.auth.clientId, _accessToken)
+        api.init()
+    }
+
+    return api
+}
+
+const serviceWorkerWakeUp = async () => {
+    getState()
+    await getApi()
+}
 
 async function checkStream() {
     if (!(await state.isLogged)) {
@@ -53,19 +74,10 @@ async function checkUser() {
 }
 
 async function Init(config) {
+    state[STORE_CONFIG_KEY] = config
     const accessToken = await state.accessToken
     api = new Api(config.auth.clientId, accessToken, config.streamerUID)
     api.init()
-
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        switch (request.type) {
-            case MSG_GET_CONFIG:
-                sendResponse({config})
-                break
-            default:
-                break
-        }
-    })
 
     await checkUser()
     chrome.alarms.create(ALARM_FETCH_USER_KEY, {
@@ -100,6 +112,8 @@ async function handleNotification(notification, buttonId = null) {
 chrome.notifications.onButtonClicked.addListener(handleNotification)
 chrome.notifications.onClicked.addListener(handleNotification)
 chrome.alarms.onAlarm.addListener(async ({name}) => {
+    await serviceWorkerWakeUp()
+
     switch (name) {
         case ALARM_FETCH_USER_KEY:
             const accessToken = await state.accessToken
