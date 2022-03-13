@@ -78,7 +78,7 @@ async function UI() {
     btnToggleNotificationElement.innerHTML = `${showNotification ? 'Activé' : 'Désactivé'}`
 
     const isOnLiveElement = UI_DOM_STATUS_IS_ON_LIVE()
-    isOnLiveElement.innerHTML = `${(!stream || stream.length === 0) ? 'Pas en live' : 'En live'}`
+    isOnLiveElement.innerHTML = `${!stream ? 'Pas en live' : 'En live'}`
 }
 
 async function App() {

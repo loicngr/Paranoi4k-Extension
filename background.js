@@ -3,8 +3,8 @@ import {
     State,
     STORE_ACCESS_TOKEN_KEY,
     STORE_CONFIG_KEY,
+    STORE_LAST_NOTIFIED_AT_KEY,
     STORE_LOGGED_KEY,
-    STORE_SHOW_NOTIFICATION_KEY,
     STORE_STREAM_KEY,
     STORE_USER_KEY
 } from "./shared/state.js"
@@ -12,9 +12,11 @@ import {
     ALARM_API_FETCH_INTERVAL,
     ALARM_FETCH_USER_KEY,
     DATA_AUTH_REQUIRED_NOTIFICATION,
-    NOTIFiCATION_NEED_LOGIN
+    DATA_STREAMER_ON_LIVE_NOTIFICATION,
+    NOTIFiCATION_NEED_LOGIN,
+    NOTIFiCATION_STREAMER_ON_LIVE
 } from "./shared/const.js"
-import {loadFile} from "./shared/utils.js"
+import {createAudioWindow, loadFile} from "./shared/utils.js"
 import {launchNotification} from "./shared/notification.js"
 
 let state = new State()
@@ -47,8 +49,23 @@ async function checkStream() {
         return
     }
 
-    const stream = await api.stream
-    state[STORE_STREAM_KEY] = stream.data
+    const streamData = await api.stream
+    const stream = (streamData.data && streamData.data.length !== 0) ? streamData.data[0] : null
+    state[STORE_STREAM_KEY] = stream
+
+    const lastNotifiedAt = await state.lastNotifiedAt
+    if (stream && lastNotifiedAt !== stream.started_at) {
+        state[STORE_LAST_NOTIFIED_AT_KEY] = stream.started_at
+
+        if (!(await state.showNotification))
+            return
+
+        launchNotification(NOTIFiCATION_STREAMER_ON_LIVE, {
+            message: DATA_STREAMER_ON_LIVE_NOTIFICATION
+        })
+
+        await createAudioWindow()
+    }
 }
 
 async function checkUser() {
@@ -61,8 +78,7 @@ async function checkUser() {
             return
 
         launchNotification(NOTIFiCATION_NEED_LOGIN, {
-            message: DATA_AUTH_REQUIRED_NOTIFICATION,
-            buttons: [{title: 'Ne plus me notifier'}, {title: 'Fermer'}],
+            message: DATA_AUTH_REQUIRED_NOTIFICATION
         })
         return
     }
@@ -97,20 +113,10 @@ async function Init(config) {
 }
 
 
-async function handleNotification(notification, buttonId = null) {
-    switch (notification) {
-        case NOTIFiCATION_NEED_LOGIN:
-            if (buttonId === 0) {
-                state[STORE_SHOW_NOTIFICATION_KEY] = false
-            }
-            break
-        default:
-            break
-    }
-}
+// function handleNotification(notificationId, buttonIndex) {}
+// chrome.notifications.onButtonClicked.addListener(handleNotification)
+// chrome.notifications.onClicked.addListener(handleNotification)
 
-chrome.notifications.onButtonClicked.addListener(handleNotification)
-chrome.notifications.onClicked.addListener(handleNotification)
 chrome.alarms.onAlarm.addListener(async ({name}) => {
     await serviceWorkerWakeUp()
 

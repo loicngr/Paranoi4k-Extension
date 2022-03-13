@@ -4,6 +4,7 @@ export const STORE_STREAM_KEY = 'stream'
 export const STORE_ACCESS_TOKEN_KEY = 'accessToken'
 export const STORE_CONFIG_KEY = 'config'
 export const STORE_SHOW_NOTIFICATION_KEY = 'showNotification'
+export const STORE_LAST_NOTIFIED_AT_KEY = 'lastNotifiedAt'
 
 class Store {
     constructor() {}
@@ -44,6 +45,12 @@ class Store {
         })
     }
 
+    get lastNotifiedAt() {
+        return new Promise((resolve) => {
+            chrome.storage.local.get([STORE_LAST_NOTIFIED_AT_KEY], r => resolve(r[STORE_LAST_NOTIFIED_AT_KEY]))
+        })
+    }
+
     set [STORE_USER_KEY](user) {
         chrome.storage.local.set({ [STORE_USER_KEY]: user })
     }
@@ -66,6 +73,10 @@ class Store {
 
     set [STORE_CONFIG_KEY](config) {
         chrome.storage.local.set({ [STORE_CONFIG_KEY]: config })
+    }
+
+    set [STORE_LAST_NOTIFIED_AT_KEY](date) {
+        chrome.storage.local.set({ [STORE_LAST_NOTIFIED_AT_KEY]: date })
     }
 }
 
@@ -112,6 +123,10 @@ export class State {
         return this._store.config
     }
 
+    get lastNotifiedAt() {
+        return this._store.lastNotifiedAt
+    }
+
     set [STORE_LOGGED_KEY](status) {
         this._store[STORE_LOGGED_KEY] = status
     }
@@ -134,5 +149,9 @@ export class State {
 
     set [STORE_CONFIG_KEY](config) {
         this._store[STORE_CONFIG_KEY] = config
+    }
+
+    set [STORE_LAST_NOTIFIED_AT_KEY](date) {
+        this._store[STORE_LAST_NOTIFIED_AT_KEY] = date
     }
 }

@@ -2,6 +2,7 @@
   "name": "Paranoi4k Extension",
   "description": "Extension officiel de @paranoi4k, soyez averti lorsqu'un live Twitch est lancé",
   "version": "1.0",
+  "author": "zaekof",
   "manifest_version": 3,
   "permissions": [
     "identity",
