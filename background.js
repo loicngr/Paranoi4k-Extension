@@ -31,7 +31,7 @@ const getApi = async () => {
         const _config = await state.config
         const _accessToken = await state.accessToken
 
-        api = new Api(_config.auth.clientId, _accessToken)
+        api = new Api(_config.auth.clientId, _accessToken, _config.streamerUID)
         api.init()
     }
 
