@@ -16,6 +16,10 @@ const UI_DOM_STATUS_IS_ON_LIVE = () => document.querySelector('#isOnLive h5 span
 const UI_DOM_BTN_CREDIT = () => document.getElementById('btnCredit')
 const UI_DOM_CREDIT = () => document.getElementById('credit')
 const UI_DOM_CREDIT_CLOSE = () => document.querySelector('#credit > button')
+const UI_DOM_BTN_TWITCH = () => document.querySelector('#social svg[data-id=twitch]')
+const UI_DOM_BTN_TWITTER = () => document.querySelector('#social svg[data-id=twitter]')
+const UI_DOM_BTN_YOUTUBE = () => document.querySelector('#social svg[data-id=youtube]')
+const UI_DOM_BTN_INSTAGRAM = () => document.querySelector('#social svg[data-id=instagram]')
 
 const state = new State()
 const flow = new Flow()
@@ -63,6 +67,26 @@ async function EventListeners() {
     const btnCreditCloseElement = UI_DOM_CREDIT_CLOSE()
     btnCreditElement.addEventListener('click', flipFlopCredit)
     btnCreditCloseElement.addEventListener('click', flipFlopCredit)
+
+    const btnTwitch = UI_DOM_BTN_TWITCH()
+    btnTwitch.addEventListener('click', async () => {
+        chrome.tabs.create({active: true, url: `https://www.twitch.tv/paranoi4k`})
+    })
+
+    const btnTwitter = UI_DOM_BTN_TWITTER()
+    btnTwitter.addEventListener('click', async () => {
+        chrome.tabs.create({active: true, url: `https://www.twitter.com/Paranoi4k`})
+    })
+
+    const btnYoutube = UI_DOM_BTN_YOUTUBE()
+    btnYoutube.addEventListener('click', async () => {
+        chrome.tabs.create({active: true, url: `https://www.youtube.com/c/Paranoi4k`})
+    })
+
+    const btnInstagram = UI_DOM_BTN_INSTAGRAM()
+    btnInstagram.addEventListener('click', async () => {
+        chrome.tabs.create({active: true, url: `https://www.instagram.com/paranoi4k`})
+    })
 }
 
 async function UI() {
