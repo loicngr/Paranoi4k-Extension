@@ -14,15 +14,21 @@ export async function loadFile(path) {
     return response.json()
 }
 
+/**
+ * With Manifest version 3 we can't play audio simply in service worker,
+ * so i make a simple function for create fake window and play sound in it
+ *
+ * @returns {Promise<void>}
+ */
 export async function createAudioWindow () {
-    const newWindow = await chrome.windows.create({
+    chrome.windows.create({
         type: 'popup',
         focused: false,
         state: 'minimized',
         url: chrome.runtime.getURL('audio.html')
+    }, (newWindow) => {
+        setTimeout(async () => {
+            await chrome.windows.remove(newWindow.id)
+        }, 3500)
     })
-
-    setTimeout(async () => {
-        await chrome.windows.remove(newWindow.id)
-    }, 3500)
 }
