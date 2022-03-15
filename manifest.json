@@ -1,9 +1,13 @@
 {
   "name": "Paranoi4k Extension",
   "description": "Extension officiel de @paranoi4k, soyez averti lorsqu'un live Twitch est lancé",
-  "version": "1.0",
-  "author": "zaekof",
+  "version": "4.0",
+  "developer": {
+    "name": "Zaekof",
+    "url": "https://twitter.com/Zaekof"
+  },
   "manifest_version": 3,
+  "minimum_opera_version": "53.0",
   "permissions": [
     "identity",
     "storage",
