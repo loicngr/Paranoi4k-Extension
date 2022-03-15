@@ -12,3 +12,5 @@
 - [Twitter icon](https://icons8.com/icons/set/twitter) by [Icons8](https://icons8.com)
 - [Instagram icon](https://icons8.com/icons/set/instagra) by [Icons8](https://icons8.com)
 - [YouTube icon](https://icons8.com/icons/set/youtube) by [Icons8](https://icons8.com)
+
+# Extension in manifestVersion3 [here](https://github.com/loicngr/Paranoi4k-Extension/tree/manifest3)
