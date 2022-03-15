@@ -112,11 +112,6 @@ async function Init(config) {
     })
 }
 
-
-// function handleNotification(notificationId, buttonIndex) {}
-// chrome.notifications.onButtonClicked.addListener(handleNotification)
-// chrome.notifications.onClicked.addListener(handleNotification)
-
 chrome.alarms.onAlarm.addListener(async ({name}) => {
     await serviceWorkerWakeUp()
 

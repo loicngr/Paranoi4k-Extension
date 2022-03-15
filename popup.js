@@ -106,7 +106,7 @@ async function UI() {
 }
 
 async function App() {
-    api = api ?? new Api(config.auth.clientId, (await state.accessToken ?? null))
+    api = api ?? new Api(config.auth.clientId, (await state.accessToken ?? null), (await config.streamerUID ?? null))
     const userIsLogged = await state.isLogged
 
     if (!userIsLogged) {
@@ -141,7 +141,6 @@ state
     .config
     .then(async (response) => {
         config = response
-        console.log(config)
 
         await EventListeners()
         await App()
