@@ -1,4 +1,4 @@
 .idea
 web-ext-artifacts/*
-config.json
-releases/*
+/*/config.json
+/*/releases/*
